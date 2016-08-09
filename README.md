@@ -2,10 +2,15 @@
 本项目是将diygod的dplayer运行在hexo的插件
 
 感谢关注这个插件的人们，感谢aplayer的hexo插件作者@grzhan，感谢A or D播放器作者@Diygod
+
 感谢插件豆子@dixyes的移植
+
 借鉴项目：https://github.com/grzhan/hexo-tag-aplayer
+
 这个项目的两个维护者一个只会卖萌，一个又很忙(这是豆子)
+
 所以有什么bug很长时间没解决的，请谅解
+
 如果您能修复的话，也希望请您修复一下提交个pr什么的，祝君安康
 
 
