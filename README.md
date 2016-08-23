@@ -7,7 +7,7 @@
 
 借鉴项目：https://github.com/grzhan/hexo-tag-aplayer
 
-这个项目的两个维护者一个只会卖萌，一个又很忙(这是豆子)
+这个项目的两个维护者一个只会卖萌，一个又沉迷屁股(这是豆子)
 
 所以有什么bug很长时间没解决的，请谅解
 
@@ -34,13 +34,18 @@ Embed DPlayer([https://github.com/DIYgod/DPlayer](https://github.com/DIYgod/DPla
 
 key can be 
 
-	'autoplay': will play automatic or not
-	'loop': will loop or not
-	'url': video source url
+	'autoplay': autoplay video, not supported by mobile browsers
+    'theme': theme color, default: #b7daff
+	'loop': loop play music, default: true
+    'lang': language, `zh` for Chinese, `en` for English, default: Navigator language
+    'screenshot':  enable screenshot function, default: false, NOTICE: if set it to true, video and video poster must enable Cross-Origin
+	'hotkey': binding hot key, including left right and Space, default: true
+    'url': Required, video url
 	'pic': video cover picture
 	'api': DPlayer danmaku backend url
 	'id': see https://github.com/DIYgod/DPlayer
 	'token': see https://github.com/DIYgod/DPlayer
+    'maxinum': maximum quantity of danmaku
 
 for example:
 
@@ -49,6 +54,39 @@ for example:
 ## Customization
 
 You can modify variables `scriptDir`(default: "/assets/js/" ) and `styleDir`(default: "/assets/css/") in `index.js` according to your blog's directory structure.
+
+## Issue
+
+If any issue occurs, tell me via issue, use a hexo raw tag like below to use dplayer:
+
+    {% raw %}
+    <div id="player1" class="dplayer"></div>
+    <script src="dist/DPlayer.min.js"></script><!-- use your path -->
+    <script>
+    var option = {
+        element: document.getElementById('player1'),                       // Optional, player element
+        autoplay: false,                                                   // Optional, autoplay video, not supported by mobile browsers
+        theme: '#FADFA3',                                                  // Optional, theme color, default: #b7daff
+        loop: true,                                                        // Optional, loop play music, default: true
+        lang: 'zh',                                                        // Optional, language, `zh` for Chinese, `en` for English, default: Navigator language
+        screenshot: true,                                                  // Optional, enable screenshot function, default: false, NOTICE: if set it to true, video and video poster must enable Cross-Origin
+        hotkey: true,                                                      // Optional, binding hot key, including left right and Space, default: true
+        video: {                                                           // Required, video info
+            url: '若能绽放光芒.mp4',                                         // Required, video url
+            pic: '若能绽放光芒.png'                                          // Optional, music picture
+        },
+        danmaku: {                                                         // Optional, showing danmaku, ignore this option to hide danmaku
+            id: '9E2E3368B56CDBB4',                                        // Required, danmaku id, NOTICE: it must be unique, can not use these in your new player: `https://dplayer.daoapp.io/list`
+            api: 'https://dplayer.daoapp.io/',                             // Required, danmaku api
+            token: 'tokendemo',                                            // Optional, danmaku token for api
+            maximum: 1000                                                  // Optional, maximum quantity of danmaku
+        }
+    }
+    var dp = new DPlayer(option);
+    </script>
+    {% endraw %}
+    
+see [DPlayer](https://github.com/DIYgod/DPlayer) for usage detail
 
 ## Todo
 
