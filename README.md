@@ -45,7 +45,7 @@ key can be
 	'api': DPlayer danmaku backend url
 	'id': see https://github.com/DIYgod/DPlayer
 	'token': see https://github.com/DIYgod/DPlayer
-    'maxinum': maximum quantity of danmaku
+    'maximum': maximum quantity of danmaku
 
 for example:
 

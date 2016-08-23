@@ -54,7 +54,7 @@ hexo.extend.filter.register('after_post_render', function(data) {
 
 // {% dplayer key=value ... %}
 hexo.extend.tag.register('dplayer', function(args) {
-  var  url=undefined, api=undefined, loop=undefined, autoplay=undefined, theme=undefined, pic=undefined, did=undefined, token=undefined, screenshot=undefined, lang=undefined, maxinum=undefined, hotkey=undefined;
+  var  url=undefined, api=undefined, loop=undefined, autoplay=undefined, theme=undefined, pic=undefined, did=undefined, token=undefined, screenshot=undefined, lang=undefined, maximum=undefined, hotkey=undefined;
   var  id = 'dplayer' + (counter++),
        raw =  '<div id="'+ id + '" class="dplayer" style="margin-bottom: 20px;"></div>';
   for (var i = 0; i < args.length; ++i) {
@@ -107,8 +107,8 @@ hexo.extend.tag.register('dplayer', function(args) {
       case 'token':
         token = arg.slice(arg.indexOf("=")+1);
         break;
-      case 'maxinum':
-        maxinum = arg.slice(arg.indexOf("=")+1);
+      case 'maximum':
+        maximum = arg.slice(arg.indexOf("=")+1);
         break;
     }
   }
@@ -131,7 +131,7 @@ hexo.extend.tag.register('dplayer', function(args) {
           api: api,
           id: did,
           token: token,
-          maxinum: maxinum
+          maximum: maximum
         })
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
     ');</script>';
