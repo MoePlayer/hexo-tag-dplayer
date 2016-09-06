@@ -45,16 +45,17 @@ for (var i = 0; i < registers.length; ++i) {
 }
 
 hexo.extend.filter.register('after_post_render', function(data) {
-  data.content =
-    (fs.existsSync(path.join(srcDir, dplayerStyle)) ? util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: '/' + styleDir + dplayerStyle }) : '') +
-    util.htmlTag('script', {src: '/' + scriptDir + dplayerScript}, " ") +
-    data.content;
+  if (hexo.render.getOutput(data.source)=='html')
+    data.content =
+      (fs.existsSync(path.join(srcDir, dplayerStyle)) ? util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: '/' + styleDir + dplayerStyle }) : '') +
+      util.htmlTag('script', {src: '/' + scriptDir + dplayerScript}, " ") +
+      data.content;
   return data;
 });
 
 // {% dplayer key=value ... %}
 hexo.extend.tag.register('dplayer', function(args) {
-  var  url=undefined, api=undefined, loop=undefined, autoplay=undefined, theme=undefined, pic=undefined, did=undefined, token=undefined, screenshot=undefined, lang=undefined, maximum=undefined, hotkey=undefined;
+  let  url, api, loop, autoplay, theme, pic, did, token, screenshot, lang, maximum, hotkey, preload;
   var  id = 'dplayer' + (counter++),
        raw =  '<div id="'+ id + '" class="dplayer" style="margin-bottom: 20px;"></div>';
   for (var i = 0; i < args.length; ++i) {
@@ -92,6 +93,9 @@ hexo.extend.tag.register('dplayer', function(args) {
         else
           hotkey = false;
         break;
+      case 'preload':
+        preload = arg.slice(arg.indexOf("=")+1);
+        break;
       case 'url':
         url = arg.slice(arg.indexOf("=")+1);
         break;
@@ -123,6 +127,7 @@ hexo.extend.tag.register('dplayer', function(args) {
         lang: ((lang == 'zh' | lang == 'en') ? lang : undefined),
         screenshot: screenshot,
         hotkey: hotkey,
+        preload: preload,
         video: {
           url: url,
           pic: pic
