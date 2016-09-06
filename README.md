@@ -20,7 +20,7 @@
 
 Embed DPlayer([https://github.com/DIYgod/DPlayer](https://github.com/DIYgod/DPlayer)) in Hexo posts/pages.
 
-![plugin screenshot](https://video-cache.morz.org/data/img/dplayer.png)
+![plugin screenshot](https://video-cache.morz.org/data/img/dplayer.jpg)
 
 
 
