@@ -47,10 +47,14 @@ key can be
 	'id': see https://github.com/DIYgod/DPlayer
 	'token': see https://github.com/DIYgod/DPlayer
     'maximum': maximum quantity of danmaku
+    
+    'width' maximum width of the dplayer wraper
+    'height' maximum height of the dplayer wraper, you can use this like "height=233px"
 
 for example:
 
 	{% dplayer "url=http://devtest.qiniudn.com/若能绽放光芒.mp4" "api=http://dplayer.daoapp.io" "pic=http://devtest.qiniudn.com/若能绽放光芒.png" "id=9E2E3368B56CDBB4" "loop=yes" "theme=#FADFA3" "autoplay=false" "token=tokendemo" %}
+    {% dplayer "url=http://devtest.qiniudn.com/若能绽放光芒.mp4" "api=http://dplayer.donot.help/dplayerpy" "pic=http://devtest.qiniudn.com/若能绽放光芒.png" "id=2622668" "loop=yes" "theme=#FADFA3" "autoplay=false" "width=233px" %}
 
 ## Customization
 
