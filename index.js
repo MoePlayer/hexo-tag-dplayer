@@ -145,7 +145,7 @@ hexo.extend.tag.register('dplayer', function(args) {
           id: did,
           token: token,
           maximum: maximum,
-	  addition: [addition]
+	  addition: (addition == undefined ? undefined : [addition] )
         })
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
     ');</script>';
