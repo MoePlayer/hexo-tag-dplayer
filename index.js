@@ -119,7 +119,7 @@ hexo.extend.tag.register('dplayer', function(args) {
       case 'height':
         height = arg.slice(arg.indexOf("=")+1);
         break;
-	  case 'addition':
+      case 'addition':
         addition = arg.slice(arg.indexOf("=")+1);
         break;
     }
@@ -141,11 +141,11 @@ hexo.extend.tag.register('dplayer', function(args) {
           pic: pic
         },
         danmaku: (api == undefined ? undefined :{
-		  addition: [addition],
           api: api,
           id: did,
           token: token,
-          maximum: maximum
+          maximum: maximum,
+	  addition: [addition]
         })
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
     ');</script>';
