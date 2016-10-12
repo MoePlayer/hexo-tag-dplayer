@@ -22,7 +22,7 @@ Embed DPlayer([https://github.com/DIYgod/DPlayer](https://github.com/DIYgod/DPla
 
 [Hexo Demo](https://morz.org/archives/2016-09-06/[%E8%A7%86%E9%A2%91%E5%88%86%E4%BA%AB]%20%E9%BA%BB%E6%9E%9D%E5%87%86%E5%8F%99%E4%BA%8B%E6%AD%8C%E7%B3%BB%E5%88%97.html)
 
-![plugin screenshot](https://video-cache.morz.org/data/img/dplayer.jpg)
+![plugin screenshot](https://video-cache.morz.org/data/img/dplayer-1.jpg)
 
 
 
