@@ -88,6 +88,7 @@ If any issue occurs, tell me via issue, use a hexo raw tag like below to use dpl
             api: 'https://dplayer.daoapp.io/',                             // Required, danmaku api
             token: 'tokendemo',                                            // Optional, danmaku token for api
             maximum: 1000                                                  // Optional, maximum quantity of danmaku
+	    addition: ['https://dplayer.daoapp.io/bilibili?aid=4157142']   // Optional, additional danmaku, see: `Bilibili 弹幕支持`
         }
     }
     var dp = new DPlayer(option);

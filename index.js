@@ -55,7 +55,7 @@ hexo.extend.filter.register('after_post_render', function(data) {
 
 // {% dplayer key=value ... %}
 hexo.extend.tag.register('dplayer', function(args) {
-  let  url, api, loop, autoplay, theme, pic, did, token, screenshot, lang, maximum, hotkey, preload, width, height;
+  let  url, api, loop, autoplay, theme, pic, did, token, screenshot, lang, maximum, hotkey, preload, width, height, addition;
   var  id = 'dplayer' + (counter++);
   for (var i = 0; i < args.length; ++i) {
     var arg=args[i];
@@ -119,6 +119,9 @@ hexo.extend.tag.register('dplayer', function(args) {
       case 'height':
         height = arg.slice(arg.indexOf("=")+1);
         break;
+	  case 'addition':
+        addition = arg.slice(arg.indexOf("=")+1);
+        break;
     }
   }
   var raw =  '<div id="'+ id + '" class="dplayer" style="margin-bottom: 20px;'+(height?" width:"+width+";":"")+(height?" height:"+height+";":"")+'"></div>';
@@ -138,6 +141,7 @@ hexo.extend.tag.register('dplayer', function(args) {
           pic: pic
         },
         danmaku: (api == undefined ? undefined :{
+		  addition: [addition],
           api: api,
           id: did,
           token: token,
