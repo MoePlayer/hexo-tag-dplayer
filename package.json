@@ -1,6 +1,6 @@
 {
   "name": "hexo-tag-dplayer",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Embed dplayer in Hexo posts/pages",
   "main": "index.js",
   "scripts": {
