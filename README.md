@@ -20,7 +20,7 @@
 
 Embed DPlayer([https://github.com/DIYgod/DPlayer](https://github.com/DIYgod/DPlayer)) in Hexo posts/pages.
 
-[Hexo Demo](https://morz.org/archives/2016-09-06/[%E8%A7%86%E9%A2%91%E5%88%86%E4%BA%AB]%20%E9%BA%BB%E6%9E%9D%E5%87%86%E5%8F%99%E4%BA%8B%E6%AD%8C%E7%B3%BB%E5%88%97.html)
+[Hexo Demo](https://morz.org/archives/2016-09-09/%E8%A7%86%E9%A2%91%E5%88%86%E4%BA%AB-%E3%80%90%E6%9D%B1%E6%96%B9Vocal%E3%80%91%E8%8A%B1%E6%98%A0%E3%80%8C%E3%82%BF%E3%83%9E%E3%82%B7%E3%82%A4%E3%83%8E%E3%83%8F%E3%83%8A%E3%80%8D-%E5%87%8B%E5%8F%B6%E6%A3%95-%E3%80%8CSubbed%E3%80%8D.html)
 
 ![plugin screenshot](https://video-cache.morz.org/data/img/dplayer-1.jpg)
 
