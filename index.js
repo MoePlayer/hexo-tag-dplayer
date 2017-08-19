@@ -16,7 +16,6 @@ const fs = require('hexo-fs'),
   files = [
     ['DPlayer.min.css', styleDir],
     ['DPlayer.min.js', scriptDir],
-    ['notexist.min.js', scriptDir],// for robust test TODO: remove this
     // some map for debug use
     ['DPlayer.min.css.map', styleDir],
     //['DPlayer.min.js.map', scriptDir],
