@@ -1,131 +1,159 @@
 /**
 * hexo-tag-dplayer
-* https://github.com/NextMoe/hexo-tag-dplayer
-* Transplant recipients : dixyes
-* Integrated source protocol 
-* ---------------------------------
-* source item
-* hexo-tag-aplayer
-* https://github.com/grzhan/hexo-tag-aplayer
-* Copyright (c) 2016, grzhan
-* Licensed under the MIT license.
-* ---------------------------------
+* dixyes Created 201708190000
 * Syntax:
 *  {% dplayer key=value ... %}
 */
-'use strict'
-var fs = require('hexo-fs'),
+'use strict';
+const fs = require('hexo-fs'),
   util = require('hexo-util'),
+  urlFn = require('url'),
   path = require('path'),
-  counter = 0,
   srcDir = path.dirname(require.resolve('dplayer')),
-  scriptDir = 'assets/js/', //change this and below to change js and css dir
-  styleDir = 'assets/css/',
-  dplayerScript = 'DPlayer.min.js',
-  dplayerStyle = 'DPlayer.min.css',
-  registers = [
-    [dplayerStyle, styleDir + dplayerStyle, path.join(srcDir, dplayerStyle)],
-    [dplayerScript, scriptDir + dplayerScript, path.join(srcDir, dplayerScript)],
+  mark = "<!-- dplayer used1 -->",
+  scriptDir = '/assets/js/', //change this to change js and css dir
+  styleDir = '/assets/css/',
+  files = [
+    ['DPlayer.min.css', styleDir],
+    ['DPlayer.min.js', scriptDir],
+    ['notexist.min.js', scriptDir],// for robust test TODO: remove this
+    // some map for debug use
+    ['DPlayer.min.css.map', styleDir],
+    //['DPlayer.min.js.map', scriptDir],
+    // if there be any other dplayer file
+    //['someDplayerFile.xxx', targetDir],
   ];
 
-for (var i = 0; i < registers.length; ++i) {
-  (function (i) {
-    var register = registers[i], regName = register[0],
-      pubPath = register[1], srcPath = register[2];
-    if(fs.existsSync(srcPath))
-        hexo.extend.generator.register(regName, function(locals) {
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    //console.log(target.split(search))
+    return target.split(search).join(replacement);
+};
+  
+var counter = 0,
+  conf = hexo.config["hexo-tag-dplayer"] || {},
+  tbIns=[];
+
+if (!conf.cdn){
+  files.forEach(item => {
+    var destPath = item[1], filePath = path.join(srcDir, item[0]);
+    if (item[1] === scriptDir){
+      destPath = conf.js_path || item[1];
+    } else if (item[1] === styleDir){
+      destPath = conf.css_path || item[1];
+    }
+    fs.access(filePath, (fs.constants || fs).R_OK , (err) => {
+      if(err){
+        console.log("INFO  hexo-tag-dplayer: "+item[0]+" is not found in this version of dplayer, skip it.");
+      } else {
+        hexo.extend.generator.register(path.posix.join(destPath, item[0]), (_) => {
           return {
-            path: pubPath,
+            path: path.posix.join(destPath, item[0]),
             data: function() {
-              return fs.createReadStream(srcPath);
+              return fs.createReadStream(filePath);
             }
-          };
+          }
         });
-  })(i);
+        tbIns.push(path.posix.join(destPath, item[0]));
+      }
+    })
+  })
 }
 
-hexo.extend.filter.register('after_post_render', function(data) {
-  if (hexo.render.getOutput(data.source)=='html')
-    data.content =
-      (fs.existsSync(path.join(srcDir, dplayerStyle)) ? util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: '/' + styleDir + dplayerStyle }) : '') +
-      util.htmlTag('script', {src: '/' + scriptDir + dplayerScript}, " ") +
-      data.content;
-  return data;
-});
+hexo.extend.filter.register('after_render:html', (str, data) => {
+  //console.log(data);
+  if(!data.onRenderEnd && str.includes(mark)){ //make sure dplayer used in final html
+    var target = conf.cdn || tbIns,
+      s = str.replaceAll(mark,"");
+    target.forEach(item => {
+      if (item.endsWith(".css")) {
+        var tag = util.htmlTag("link", {rel: 'stylesheet', type: 'text/css', href: item }, "");
+        s = s.substring(0,s.lastIndexOf("</body>"))+tag+s.substring(str.lastIndexOf("</body>"));
+      }else if (item.endsWith(".js")) {
+        var tag = util.htmlTag("script", {src: item}, "");
+        s = s.substring(0,s.indexOf("</head>"))+tag+s.substring(str.indexOf("</head>"));
+      }else if (item.endsWith(".map")) {
+        //do nothing when sorce map used
+      }else{
+        console.log("INFO hexo-tag-dplayer: unknown tile type of cdnfile:"+item);
+      }
+    })
+    //console.log(s)
+    return s;
+  }
+})
+
 
 // {% dplayer key=value ... %}
 hexo.extend.tag.register('dplayer', function(args) {
   let  url, api, loop, autoplay, theme, pic, did, token, screenshot, lang, maximum, hotkey, preload, width, height, addition;
   var  id = 'dplayer' + (counter++);
-  for (var i = 0; i < args.length; ++i) {
-    var arg=args[i];
-    if(arg.split('=').length<2)
-        continue;
-    switch(arg.split('=')[0]){
+  args.forEach(item => {
+    const k = item.split('=')[0],
+      v = item.split('=').length === 1 || item.split('=')[1];
+    switch(k){
       case 'autoplay':
-        if(arg.split('=')[1]=='true'||arg.split('=')[1]=='yes'||arg.split('=')[1]=='1')
-            autoplay = true;
-        else
-            autoplay = false;
+        autoplay = v == "true" | v === "yes" | v === "1" | v === true;
         break;
       case 'theme':
-        theme = arg.slice(arg.indexOf("=")+1);
+        theme = v === true ? "" : v ;
         break;
       case 'loop':
-        if(arg.split('=')[1]=='true'||arg.split('=')[1]=='yes'||arg.split('=')[1]=='1')
-            loop = true;
-        else
-            loop = false;
+        loop = v == "true" | v === "yes" | v === "1" | v === true;
         break;
       case 'lang':
-        lang = arg.slice(arg.indexOf("=")+1);
+        lang = v === true ? "" : v ;
         break;
       case 'screenshot':
-        if(arg.split('=')[1]=='true'||arg.split('=')[1]=='yes'||arg.split('=')[1]=='1')
-          screenshot = true;
-        else
-          screenshot = false;
+        screenshot = v == "true" | v === "yes" | v === "1" | v === true;
         break;
       case 'hotkey':
-        if(arg.split('=')[1]=='true'||arg.split('=')[1]=='yes'||arg.split('=')[1]=='1')
-          hotkey = true;
-        else
-          hotkey = false;
+        hotkey = v == "true" | v === "yes" | v === "1" | v === true;
         break;
       case 'preload':
-        preload = arg.slice(arg.indexOf("=")+1);
+        preload = v === true ? "" : v ;
         break;
       case 'url':
-        url = arg.slice(arg.indexOf("=")+1);
+        url = v === true ? "" : v ;
         break;
       case 'pic':
-        pic = arg.slice(arg.indexOf("=")+1);
+        pic = v === true ? "" : v ;
         break;
       case 'api':
-        api = arg.slice(arg.indexOf("=")+1);
+        api = v === true ? "" : v ;
         break;
       case 'id':
-        did = arg.slice(arg.indexOf("=")+1);
+        did = v === true ? "" : v ;
         break;
       case 'token':
-        token = arg.slice(arg.indexOf("=")+1);
+        token = v === true ? "" : v ;
         break;
       case 'maximum':
-        maximum = arg.slice(arg.indexOf("=")+1);
+        maximum = v === true ? "" : v ;
         break;
       case 'width':
-        width = arg.slice(arg.indexOf("=")+1);
+        width = v === true ? "" : v ;
         break;
       case 'height':
-        height = arg.slice(arg.indexOf("=")+1);
+        height = v === true ? "" : v ;
         break;
       case 'addition':
-        addition = arg.slice(arg.indexOf("=")+1);
+        addition = v === true ? "" : v ;
         break;
     }
-  }
+  })
+  
   var raw =  '<div id="'+ id + '" class="dplayer" style="margin-bottom: 20px;'+(height?" width:"+width+";":"")+(height?" height:"+height+";":"")+'"></div>';
-  if(url != undefined)
+  if(url != undefined){
+    if (hexo.config["post_asset_folder"] == true ){
+      //for #10, if post_asset_folder is enable, regard url as relative url
+      if (! (url.startsWith("https://") || url.startsWith("http://") || url.startsWith("/"))){
+        var PostAsset = hexo.model('PostAsset');
+        var asset = PostAsset.findOne({post: this._id, slug: url});
+        if (!asset) return "bad asset path...";
+        url = urlFn.resolve(hexo.config.root, asset.path);
+      }
+    }
     raw += '<script>var '+ id + ' = new DPlayer('+
       JSON.stringify({
         element: "document.getElementById('')",
@@ -149,7 +177,9 @@ hexo.extend.tag.register('dplayer', function(args) {
         })
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
     ');</script>';
-  else
+  }
+  else{
     raw += '<p>no url specified, no dplayer _(:3」∠)_</p>';
-  return raw;
+  }
+  return raw+mark;
 });
