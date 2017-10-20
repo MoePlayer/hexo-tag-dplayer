@@ -17,7 +17,7 @@ const fs = require('hexo-fs'),
     ['DPlayer.min.css', styleDir],
     ['DPlayer.min.js', scriptDir],
     // some map for debug use
-    ['DPlayer.min.css.map', styleDir],
+    //['DPlayer.min.css.map', styleDir],
     //['DPlayer.min.js.map', scriptDir],
     // if there be any other dplayer file
     //['someDplayerFile.xxx', targetDir],
@@ -89,7 +89,7 @@ hexo.extend.tag.register('dplayer', function(args) {
   var  id = 'dplayer' + (counter++);
   args.forEach(item => {
     const k = item.split('=')[0],
-      v = item.split('=').length === 1 || item.split('=')[1];
+      v = item.split('=').length === 1 || item.slice(item.indexOf('=')+1);
     switch(k){
       case 'autoplay':
         autoplay = v == "true" | v === "yes" | v === "1" | v === true;
@@ -172,7 +172,7 @@ hexo.extend.tag.register('dplayer', function(args) {
           id: did,
           token: token,
           maximum: maximum,
-	  addition: (addition == undefined ? undefined : [addition] )
+          addition: (addition == undefined ? undefined : [addition] )
         })
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
     ');</script>';
