@@ -87,20 +87,21 @@ hexo.extend.filter.register('after_render:html', (str, data) => {
 // {% dplayer key=value ... %}
 hexo.extend.tag.register('dplayer', (args) => {
 
-  const conf = (hexo.config['hexo-tag-dplayer'] || {})['default'] || {};
+  const def = conf['default'] || {};
+  //console.log(def)
   
   var  id = 'dplayer' + (counter++), opt = {};
   
   for (var i in args) {
     var k = args[i].split('=')[0],
-      v = args[i].slice(args[i].indexOf('=')+1);
+      v = args[i].split("=").length < 2 ? "true" : args[i].slice(args[i].indexOf('=')+1);
     if (['autoplay', 'loop', 'screenshot', 'hotkey', 'mutex', 'dmunlimited'].indexOf(k) >= 0){
       // bool
       v = v.toLowerCase();
-      opt[k] = ['true', 'yes', '1', 'y', 'on', true].indexOf(v) >= 0;
+      opt[k] = ['true', 'yes', '1', 'y', 'on', ''].indexOf(v) >= 0;
     } else if (['preload', 'theme', 'lang', 'logo', 'url', 'pic', 'thumbnails', 'vidtype', 'suburl', 'subtype', 'subbottom', 'subcolor', 'subcolor', 'id', 'api', 'token', 'addition', 'dmuser', 'width', 'height', 'code'].indexOf(k) >= 0){
       // string
-      opt[k] = v;
+      opt[k] = v.toString();
     } else if (['volume', 'maximum'].indexOf(k) >= 0){
       // number
       opt[k] = Number(v) || undefined;
@@ -110,9 +111,9 @@ hexo.extend.tag.register('dplayer', (args) => {
     }
   }
   
-  const width = opt.width || conf.width,
-    height = opt.height || conf.height;
-  var url = opt.url || conf.url;
+  const width = opt.width || def.width,
+    height = opt.height || def.height;
+  var url = opt.url || def.url;
   var raw =  '<div id="'+ id + '" class="dplayer" style="margin-bottom: 20px;'+(width ?' width:'+width+';':'')+(height?' height:'+height+';':'')+'"></div>';
   if(url != undefined){
     if (hexo.config['post_asset_folder'] == true ){
@@ -163,23 +164,25 @@ hexo.extend.tag.register('dplayer', (args) => {
         icons: 'icons',
         contextmenu: 'menu',
       },(k,v)=>{
-        //console.log("k",k,"v",v,"?",opt[k],"?a", conf[k])
+        //console.log("k",k,"v",v,"?",opt[k],"?a", def[k])
         if (typeof v === 'string') {
           if (v !== "document.getElementById('')"){
-            return opt[v] || conf[v];
+            return opt[v] || def[v];
           } else {
             return v;
           }
-        } else if (k === "subtitle" && !(opt.suburl || conf.suburl)) {
+        } else if (k === "subtitle" && !(opt.suburl || def.suburl)) {
           return undefined;
-        } else if (k === "danmaku" && !(opt.api || conf.api)) {
+        } else if (k === "danmaku" && !(opt.api || def.api)) {
+          return undefined;
+        } else if (k === "addition" && !(opt.addition || def.addition)) {
           return undefined;
         } else {
           return v;
         }
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
-    ');' + (opt.code || conf.code || '') + '</script>';
-    //console.log(opt.code,conf.code,(opt.code || conf.code || ''))
+    ');' + (opt.code || def.code || '') + '</script>';
+    //console.log(opt.code,def.code,(opt.code || def.code || ''))
   }
   else{
     raw += '<p>no url specified, no dplayer _(:3」∠)_</p>';
