@@ -36,28 +36,62 @@ Embed DPlayer([https://github.com/DIYgod/DPlayer](https://github.com/DIYgod/DPla
 
 key can be 
 
-	'autoplay': autoplay video, not supported by mobile browsers
-    'theme': theme color, default: #b7daff
-	'loop': loop play music, default: true
-    'lang': language, `zh` for Chinese, `en` for English, default: Navigator language
-    'screenshot':  enable screenshot function, default: false, NOTICE: if set it to true, video and video poster must enable Cross-Origin
-	'hotkey': binding hot key, including left right and Space, default: true
-    'preload': 'auto', the way to load music, can be 'none' 'metadata' 'auto', default: 'auto'
-    'url': Required, video url
-	'pic': video cover picture
-	'api': DPlayer danmaku backend url
-	'addition': Dplayer danmuku for bilibili 
-	'id': see https://github.com/DIYgod/DPlayer
-	'token': see https://github.com/DIYgod/DPlayer
-    'maximum': maximum quantity of danmaku
+    dplayer options:
+        'autoplay', 'loop', 'screenshot', 'hotkey', 'mutex', 'dmunlimited' : bool options, use "yes" "y" "true" "1" "on" or just without value to enable
+        'preload', 'theme', 'lang', 'logo', 'url', 'pic', 'thumbnails', 'vidtype', 'suburl', 'subtype', 'subbottom', 'subcolor', 'subcolor', 'id', 'api', 'token', 'addition', 'dmuser' : string arguments
+        'volume', 'maximum' : number arguments
+    container options:
+        'width', 'height' : string, used in container element style
+    other:
+        'code' : value of this key will be append to script tag
+
+arguments to DPlayer options mapping:
+
+    {
+        container: "you needn't set this",
+        autoplay: 'autoplay',
+        theme: 'theme',
+        loop: 'loop',
+        lang: 'lang',
+        screenshot: 'screenshot',
+        hotkey: 'hotkey',
+        preload: 'preload',
+        logo: 'logo',
+        volume: 'volume',
+        mutex: 'mutex',
+        video: {
+            url: 'url',
+            pic: 'pic',
+            thumbnails: 'thumbnails',
+            type: 'vidtype',
+        },
+        subtitle: {
+            url: 'suburl',
+            type: 'subtype',
+            fontSize: 'subsize',
+            bottom: 'subbottom',
+            color: 'subcolor',
+        },
+        danmaku: {
+            id: 'id',
+            api: 'api',
+            token: 'token',
+            maximum: 'maximum',
+            addition: ['addition'],
+            user: 'dmuser',
+            unlimited: 'dmunlimited',
+        },
+        icons: 'icons',
+        contextmenu: 'menu',
+    }
     
-    'width' maximum width of the dplayer wraper
-    'height' maximum height of the dplayer wraper, you can use this like "height=233px"
+see dplayer documents for more infomation.
 
 for example:
 
 	{% dplayer "url=http://devtest.qiniudn.com/若能绽放光芒.mp4" "addition=https://dplayer.daoapp.io/bilibili?aid=4157142" "api=http://dplayer.daoapp.io" "pic=http://devtest.qiniudn.com/若能绽放光芒.png" "id=9E2E3368B56CDBB4" "loop=yes" "theme=#FADFA3" "autoplay=false" "token=tokendemo" %}
     {% dplayer "url=http://devtest.qiniudn.com/若能绽放光芒.mp4" "addition=https://dplayer.daoapp.io/bilibili?aid=4157142" "api=http://dplayer.donot.help/dplayerpy" "pic=http://devtest.qiniudn.com/若能绽放光芒.png" "id=2622668" "loop=yes" "theme=#FADFA3" "autoplay=false" "width=233px" %}
+    {% dplayer 'url=some.mp4' "id=someid" "api=https://api.prprpr.me/dplayer/" "addition=/some.json" 'code=player.on("loadstart",function(){console.log("loadstart")})' "autostart" %} 
 
 ## Customization
 
@@ -71,28 +105,47 @@ If any issue occurs, tell me via issue, use a hexo raw tag like below to use dpl
     <div id="player1" class="dplayer"></div>
     <script src="dist/DPlayer.min.js"></script><!-- use your path -->
     <script>
-    var option = {
-        element: document.getElementById('player1'),                       // Optional, player element
-        autoplay: false,                                                   // Optional, autoplay video, not supported by mobile browsers
-        theme: '#FADFA3',                                                  // Optional, theme color, default: #b7daff
-        loop: true,                                                        // Optional, loop play music, default: true
-        lang: 'zh',                                                        // Optional, language, `zh` for Chinese, `en` for English, default: Navigator language
-        screenshot: true,                                                  // Optional, enable screenshot function, default: false, NOTICE: if set it to true, video and video poster must enable Cross-Origin
-        hotkey: true,                                                      // Optional, binding hot key, including left right and Space, default: true
-        preload: 'auto',                                                   // Optional, the way to load music, can be 'none' 'metadata' 'auto', default: 'auto'
-        video: {                                                           // Required, video info
-            url: '若能绽放光芒.mp4',                                         // Required, video url
-            pic: '若能绽放光芒.png'                                          // Optional, music picture
+    var dp = new DPlayer({{
+        container: document.getElementById('dplayer'),
+        autoplay: false,
+        theme: '#FADFA3',
+        loop: true,
+        screenshot: true,
+        hotkey: true,
+        logo: 'logo.png',
+        volume: 0.2,
+        mutex: true,
+        video: {
+            url: 'demo.mp4',
+            pic: 'demo.png',
+            thumbnails: 'thumbnails.jpg',
+            type: 'auto'
         },
-        danmaku: {                                                         // Optional, showing danmaku, ignore this option to hide danmaku
-            id: '9E2E3368B56CDBB4',                                        // Required, danmaku id, NOTICE: it must be unique, can not use these in your new player: `https://dplayer.daoapp.io/list`
-            api: 'https://dplayer.daoapp.io/',                             // Required, danmaku api
-            token: 'tokendemo',                                            // Optional, danmaku token for api
-            maximum: 1000                                                  // Optional, maximum quantity of danmaku
-	    addition: ['https://dplayer.daoapp.io/bilibili?aid=4157142']   // Optional, additional danmaku, see: `Bilibili 弹幕支持`
-        }
-    }
-    var dp = new DPlayer(option);
+        subtitle: {
+            url: 'webvtt.vtt',
+            type: 'webvtt',
+            fontSize: '25px',
+            bottom: '10%',
+            color: '#b7daff'
+        },
+        danmaku: {
+            id: 'demo',
+            api: 'https://api.prprpr.me/dplayer/',
+            token: 'demo',
+            maximum: 3000,
+            user: 'DIYgod',
+            margin: {
+                bottom: '15%'
+            },
+            unlimited: true
+        },
+        contextmenu: [
+            {
+                text: 'custom contextmenu',
+                link: 'https://github.com/MoePlayer/DPlayer'
+            }
+        ]
+    });
     </script>
     {% endraw %}
     
