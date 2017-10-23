@@ -1,6 +1,6 @@
 /**
 * hexo-tag-dplayer
-* dixyes Created 201708190000
+* Embed DPlayer(https://github.com/DIYgod/DPlayer) in Hexo posts/pages.
 * Syntax:
 *  {% dplayer key=value ... %}
 */
@@ -74,7 +74,7 @@ hexo.extend.filter.register('after_render:html', (str, data) => {
       }else if (item.endsWith('.map')) {
         //do nothing when sorce map used
       }else{
-        console.log('INFO hexo-tag-dplayer: unknown tile type of cdnfile:'+item);
+        console.log('INFO hexo-tag-dplayer: unknown file type of dplayer file:'+item);
       }
     })
     //console.log(s)
