@@ -125,7 +125,7 @@ hexo.extend.tag.register('dplayer', (args) => {
         opt.url = urlFn.resolve(hexo.config.root, asset.path);
       }
     }
-    raw += '<script>var player = new DPlayer(' +
+    raw += '<script>(function(){var player = new DPlayer(' +
       JSON.stringify({
         //element: "document.getElementById('')",
         container: "document.getElementById('')",
@@ -181,7 +181,7 @@ hexo.extend.tag.register('dplayer', (args) => {
           return v;
         }
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
-    ');' + (opt.code || def.code || '') + '</script>';
+    ');' + (opt.code || def.code || '') + '})()</script>';
     //console.log(opt.code,def.code,(opt.code || def.code || ''))
   }
   else{
