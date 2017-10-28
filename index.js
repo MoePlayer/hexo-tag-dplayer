@@ -66,7 +66,7 @@ hexo.extend.filter.register('after_render:html', (str, data) => {
       s = str.replaceAll(mark,'');
     target.forEach(item => {
       if (item.endsWith('.css')) {
-        var tag = util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: item }, '');
+        var tag = util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: item });
         s = s.substring(0,s.lastIndexOf('</body>'))+tag+s.substring(str.lastIndexOf('</body>'));
       }else if (item.endsWith('.js')) {
         var tag = util.htmlTag('script', {src: item}, '');
