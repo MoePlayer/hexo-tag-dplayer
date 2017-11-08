@@ -1,6 +1,6 @@
 {
   "name": "hexo-tag-dplayer",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Embed dplayer in Hexo posts/pages",
   "main": "index.js",
   "scripts": {
@@ -18,12 +18,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NextMoe/hexo-tag-dplayer.git"
+    "url": "git+https://github.com/MoePlayer/hexo-tag-dplayer.git"
   },
   "bugs": {
-    "url": "https://github.com/NextMoe/hexo-tag-dplayer/issues"
+    "url": "https://github.com/MoePlayer/hexo-tag-dplayer/issues"
   },
-  "homepage": "https://github.com/NextMoe/hexo-tag-dplayer#readme",
+  "homepage": "https://github.com/MoePlayer/hexo-tag-dplayer#readme",
   "dependencies": {
     "dplayer": "^1.6.0",
     "hexo-fs": "^0.1.6",
