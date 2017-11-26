@@ -27,6 +27,7 @@
   "dependencies": {
     "dplayer": "^1.6.0",
     "hexo-fs": "^0.1.6",
+    "hexo-log": "^0.2.0",
     "hexo-util": "^0.6.1"
   }
 }
