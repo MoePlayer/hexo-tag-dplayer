@@ -5,13 +5,18 @@
 *  {% dplayer key=value ... %}
 */
 'use strict';
+
+// default mark content
+const MARK_CONTENT = "dplayer used";
+
 const fs = require('hexo-fs'),
   util = require('hexo-util'),
+  log = require('hexo-log')({name:"hexo-tag-dplayer",debug:false}), // logger
   urlFn = require('url'),
   path = require('path'),
   srcDir = path.dirname(require.resolve('dplayer')),
-  mark = '<!-- dplayer used1 -->',
-  scriptDir = '/assets/js/', //change this to change js and css dir
+  mark = '<!-- '+ MARK_CONTENT +' -->',
+  scriptDir = '/assets/js/', // default script directories
   styleDir = '/assets/css/',
   files = [
     ['DPlayer.min.css', styleDir],
@@ -25,7 +30,7 @@ const fs = require('hexo-fs'),
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
-    //console.log(target.split(search))
+    //log.debug(target.split(search))
     return target.split(search).join(replacement);
 };
   
@@ -33,6 +38,11 @@ var counter = 0,
   conf = hexo.config['hexo-tag-dplayer'] || {},
   tbIns=[];
 
+//for hexo-all-minify:
+if (hexo.config.html_minifier)
+  hexo.config.html_minifier.ignoreCustomComments.push(mark);
+
+  
 if (!conf.cdn){
   files.forEach(item => {
     var destPath = item[1], filePath = path.join(srcDir, item[0]);
@@ -43,7 +53,7 @@ if (!conf.cdn){
     }
     fs.access(filePath, (fs.constants || fs).R_OK , (err) => {
       if(err){
-        console.log('INFO  hexo-tag-dplayer: '+item[0]+' is not found in this version of dplayer, skip it.');
+        log.info(item[0]+' is not found in this version of dplayer, skip it.');
       } else {
         hexo.extend.generator.register(path.posix.join(destPath, item[0]), (_) => {
           return {
@@ -60,24 +70,25 @@ if (!conf.cdn){
 }
 
 hexo.extend.filter.register('after_render:html', (str, data) => {
-  //console.log(data);
-  if(!data.onRenderEnd && str.includes(mark)){ //make sure dplayer used in final html
+  
+  if(str.includes('</html>') && str.includes(mark)){ //make sure dplayer used in final html
+    log.debug("got page that dplayer used")
     var target = conf.cdn || tbIns,
       s = str.replaceAll(mark,'');
     target.forEach(item => {
       if (item.endsWith('.css')) {
         var tag = util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: item });
-        s = s.substring(0,s.lastIndexOf('</body>'))+tag+s.substring(str.lastIndexOf('</body>'));
+        s = s.substring(0,s.lastIndexOf('</head>'))+tag+s.substring(s.lastIndexOf('</head>'));
       }else if (item.endsWith('.js')) {
         var tag = util.htmlTag('script', {src: item}, '');
-        s = s.substring(0,s.indexOf('</head>'))+tag+s.substring(str.indexOf('</head>'));
+        s = s.substring(0,s.indexOf('</body>'))+tag+s.substring(s.indexOf('</body>'));
       }else if (item.endsWith('.map')) {
         //do nothing when sorce map used
       }else{
-        console.log('INFO hexo-tag-dplayer: unknown file type of dplayer file:'+item);
+        log.info('unknown file type of dplayer file:'+item);
       }
     })
-    //console.log(s)
+    log.debug('postfilter: '+s);
     return s;
   }
 })
@@ -86,9 +97,11 @@ hexo.extend.filter.register('after_render:html', (str, data) => {
 
 // {% dplayer key=value ... %}
 hexo.extend.tag.register('dplayer', (args) => {
+  
+  //hexo.locals.get('posts').forEach(console.log)
 
   const def = conf['default'] || {};
-  //console.log(def)
+  //log.debug("default setting:"+def)
   
   var  id = 'dplayer' + (counter++), opt = {};
   
@@ -164,7 +177,7 @@ hexo.extend.tag.register('dplayer', (args) => {
         icons: 'icons',
         contextmenu: 'menu',
       },(k,v)=>{
-        //console.log("k",k,"v",v,"?",opt[k],"?a", def[k])
+        //log.debug("k",k,"v",v,"?",opt[k],"?a", def[k])
         if (typeof v === 'string') {
           if (v !== "document.getElementById('')"){
             return opt[v] || def[v];
@@ -182,7 +195,7 @@ hexo.extend.tag.register('dplayer', (args) => {
         }
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
     ');' + (opt.code || def.code || '') + '})()</script>';
-    //console.log(opt.code,def.code,(opt.code || def.code || ''))
+    //log.debug(opt.code,def.code,(opt.code || def.code || ''))
   }
   else{
     raw += '<p>no url specified, no dplayer _(:3」∠)_</p>';

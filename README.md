@@ -97,6 +97,17 @@ for example:
 
 You can modify variables `scriptDir`(default: "/assets/js/" ) and `styleDir`(default: "/assets/css/") in `index.js` according to your blog's directory structure.
 
+or just use _config.yml configuration:
+
+    # on _config.yml of hexo-site
+    hexo-tag-dplayer:
+      js_path: /path/to/your/default/path
+      css_path: /sth
+      default: #default tag argument 
+        id: somedefid # equals to setting id=somedefid in all {%dplayer%} tags
+        api: https://api.prprpr.me/dplayer/
+        #and other options...
+
 ## Issue
 
 If any issue occurs, tell me via issue, use a hexo raw tag like below to use dplayer:
