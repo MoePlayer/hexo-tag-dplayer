@@ -94,20 +94,16 @@ for example:
     {% dplayer 'url=some.mp4' "id=someid" "api=https://api.prprpr.me/dplayer/" "addition=/some.json" 'code=player.on("loadstart",function(){console.log("loadstart")})' "autoplay" %} 
 
 
-## Pjax compatible
+## PJAX compatible
 
 ```js
 $(document).on('pjax:start', function () {
-  try {
     if (window.dplayers) {
-      for (let i = 0; i < window.dplayers.length; i++) {
-          window.dplayers[i].destroy();
-      }
+        for (let i = 0; i < window.dplayers.length; i++) {
+            window.dplayers[i].destroy();
+        }
+        window.dplayers = [];
     }
-  }
-  catch (e) {
-    console.log(e);
-  }
 });
 ```
 
