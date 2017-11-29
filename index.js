@@ -6,16 +6,12 @@
 */
 'use strict';
 
-// default mark content
-const MARK_CONTENT = "dplayer used";
-
 const fs = require('hexo-fs'),
   util = require('hexo-util'),
   log = require('hexo-log')({name:"hexo-tag-dplayer",debug:false}), // logger
   urlFn = require('url'),
   path = require('path'),
   srcDir = path.dirname(require.resolve('dplayer')),
-  mark = '<!-- '+ MARK_CONTENT +' -->',
   scriptDir = '/assets/js/', // default script directories
   styleDir = '/assets/css/',
   files = [
@@ -70,18 +66,18 @@ if (!conf.cdn){
 }
 
 hexo.extend.filter.register('after_render:html', (str, data) => {
-  
-  if(str.includes('</html>') && str.includes(mark)){ //make sure dplayer used in final html
-    log.debug("got page that dplayer used")
+  if(str.includes('</html>') && str.includes('class="dplayer hexo-tag-dplayer-mark"')){ //make sure dplayer used in final html
+    log.debug("got page that dplayer used");
     var target = conf.cdn || tbIns,
-      s = str.replaceAll(mark,'');
+      s = str;
     target.forEach(item => {
+      //console.log(item);
       if (item.endsWith('.css')) {
         var tag = util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: item });
-        s = s.substring(0,s.lastIndexOf('</head>'))+tag+s.substring(s.lastIndexOf('</head>'));
+        s = s.replace(/<\/head>/, tag + '</head>');
       }else if (item.endsWith('.js')) {
         var tag = util.htmlTag('script', {src: item}, '');
-        s = s.substring(0,s.indexOf('</body>'))+tag+s.substring(s.indexOf('</body>'));
+        s = s.replace(/<\/head>/, tag + '</head>');
       }else if (item.endsWith('.map')) {
         //do nothing when sorce map used
       }else{
@@ -127,7 +123,7 @@ hexo.extend.tag.register('dplayer', (args) => {
   const width = opt.width || def.width,
     height = opt.height || def.height;
   var url = opt.url || def.url;
-  var raw =  '<div id="'+ id + '" class="dplayer" style="margin-bottom: 20px;'+(width ?' width:'+width+';':'')+(height?' height:'+height+';':'')+'"></div>';
+  var raw =  '<div id="'+ id + '" class="dplayer hexo-tag-dplayer-mark" style="margin-bottom: 20px;'+(width ?' width:'+width+';':'')+(height?' height:'+height+';':'')+'"></div>';
   if(url != undefined){
     if (hexo.config['post_asset_folder'] == true ){
       //for #10, if post_asset_folder is enable, regard url as relative url
@@ -194,11 +190,11 @@ hexo.extend.tag.register('dplayer', (args) => {
           return v;
         }
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
-    ');' + (opt.code || def.code || '') + '})()</script>';
-    //log.debug(opt.code,def.code,(opt.code || def.code || ''))
+    ');window.dplayers||(window.dplayers=[]);window.dplayers.push(player);' + (opt.code || def.code || '') + '})()</script>';
+    //console.log(opt.code,def.code,(opt.code || def.code || ''));
   }
   else{
     raw += '<p>no url specified, no dplayer _(:3」∠)_</p>';
   }
-  return raw+mark;
+  return raw;
 });
