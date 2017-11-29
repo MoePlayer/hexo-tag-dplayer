@@ -93,6 +93,24 @@ for example:
     {% dplayer "url=http://devtest.qiniudn.com/若能绽放光芒.mp4" "addition=https://dplayer.daoapp.io/bilibili?aid=4157142" "api=http://dplayer.donot.help/dplayerpy" "pic=http://devtest.qiniudn.com/若能绽放光芒.png" "id=2622668" "loop=yes" "theme=#FADFA3" "autoplay=false" "width=233px" %}
     {% dplayer 'url=some.mp4' "id=someid" "api=https://api.prprpr.me/dplayer/" "addition=/some.json" 'code=player.on("loadstart",function(){console.log("loadstart")})' "autoplay" %} 
 
+
+## Pjax compatible
+
+```js
+$(document).on('pjax:start', function () {
+  try {
+    if (window.dplayers) {
+      for (let i = 0; i < window.dplayers.length; i++) {
+          window.dplayers[i].destroy();
+      }
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+});
+```
+
 ## Customization
 
 You can modify variables `scriptDir`(default: "/assets/js/" ) and `styleDir`(default: "/assets/css/") in `index.js` according to your blog's directory structure.
