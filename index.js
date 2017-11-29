@@ -34,10 +34,6 @@ var counter = 0,
   conf = hexo.config['hexo-tag-dplayer'] || {},
   tbIns=[];
 
-//for hexo-all-minify:
-if (hexo.config.html_minifier)
-  hexo.config.html_minifier.ignoreCustomComments.push(mark);
-
   
 if (!conf.cdn){
   files.forEach(item => {
