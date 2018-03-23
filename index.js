@@ -83,6 +83,7 @@ hexo.extend.filter.register('after_render:html', (str, data) => {
     log.debug('postfilter: '+s);
     return s;
   }
+  return str;
 })
 
 
