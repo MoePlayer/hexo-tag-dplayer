@@ -49,7 +49,7 @@ if (!conf.cdn){
       } else {
         hexo.extend.generator.register(path.posix.join(destPath, item[0]), (_) => {
           return {
-            path: path.posix.join(destPath, item[0]),
+            path: path.relative(hexo.config.root, path.posix.join(destPath, item[0])),
             data: function() {
               return fs.createReadStream(filePath);
             }
@@ -80,7 +80,7 @@ hexo.extend.filter.register('after_render:html', (str, data) => {
         log.info('unknown file type of dplayer file:'+item);
       }
     })
-    log.debug('postfilter: '+s);
+    //log.debug('postfilter: '+s);
     return s;
   }
   return str;
