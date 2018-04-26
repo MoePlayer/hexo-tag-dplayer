@@ -89,7 +89,7 @@ hexo.extend.filter.register('after_render:html', (str, data) => {
 
 
 // {% dplayer key=value ... %}
-hexo.extend.tag.register('dplayer', (args) => {
+hexo.extend.tag.register('dplayer', function (args) {
   
   //hexo.locals.get('posts').forEach(console.log)
 
