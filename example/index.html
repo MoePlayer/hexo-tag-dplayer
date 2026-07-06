@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hexo-tag-dplayer 示例</title>
+<script src="https://cdn.jsdelivr.net/npm/dplayer@1.27.1/dist/DPlayer.min.js"></script>
+<style>
+  body { max-width: 900px; margin: 0 auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1a1a2e; color: #eee; }
+  h1 { border-bottom: 2px solid #e94560; padding-bottom: 10px; }
+  h2 { color: #e94560; margin-top: 40px; }
+  pre { background: #16213e; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 14px; }
+  code { color: #0f3460; background: #e94560; padding: 2px 6px; border-radius: 3px; }
+  pre code { background: none; color: #a8d8a8; padding: 0; }
+  .dplayer { margin-bottom: 20px; max-width: 100%; }
+  p.desc { color: #999; font-size: 14px; }
+  hr { border: none; border-top: 1px solid #333; margin: 40px 0; }
+</style>
+</head>
+<body>
+
+<h1>hexo-tag-dplayer 示例</h1>
+<p>以下是插件生成的播放器效果演示，等效于在 Hexo 文章中使用 <code>{% dplayer %}</code> 标签。</p>
+
+<!-- ==================== 示例 1: 基础播放 ==================== -->
+<h2>示例 1 — 基础视频播放</h2>
+<p class="desc">Hexo 写法: <code>{% dplayer "url=https://example.com/video.mp4" "pic=https://example.com/cover.jpg" %}</code></p>
+<div id="dplayer1" class="dplayer" style="margin-bottom:20px;max-width:100%"></div>
+<script>
+(function(){
+  if (typeof DPlayer !== 'undefined') {
+    var dp1 = new DPlayer({
+      container: document.getElementById('dplayer1'),
+      autoplay: false,
+      video: {
+        url: 'https://cdn.jsdelivr.net/npm/dplayer@1.27.1/demo/demo.mp4',
+        pic: 'https://cdn.jsdelivr.net/npm/dplayer@1.27.1/demo/demo.png',
+        type: 'auto'
+      }
+    });
+    window.dplayers || (window.dplayers = []);
+    window.dplayers.push(dp1);
+  }
+})();
+</script>
+
+<!-- ==================== 示例 2: 带弹幕 ==================== -->
+<h2>示例 2 — 带弹幕的视频</h2>
+<p class="desc">Hexo 写法: <code>{% dplayer "url=视频地址" "id=myVideo" "api=https://api.prprpr.me/dplayer/" "loop=yes" "theme=#FADFA3" %}</code></p>
+<div id="dplayer2" class="dplayer" style="margin-bottom:20px;max-width:100%"></div>
+<script>
+(function(){
+  if (typeof DPlayer !== 'undefined') {
+    var dp2 = new DPlayer({
+      container: document.getElementById('dplayer2'),
+      autoplay: false,
+      theme: '#FADFA3',
+      loop: true,
+      video: {
+        url: 'https://cdn.jsdelivr.net/npm/dplayer@1.27.1/demo/demo.mp4',
+        pic: 'https://cdn.jsdelivr.net/npm/dplayer@1.27.1/demo/demo.png',
+        type: 'auto'
+      },
+      danmaku: {
+        id: 'demo-example',
+        api: 'https://api.prprpr.me/dplayer/',
+        maximum: 1000,
+        user: 'hexo-user'
+      }
+    });
+    window.dplayers.push(dp2);
+  }
+})();
+</script>
+
+<!-- ==================== 示例 3: 指定尺寸 ==================== -->
+<h2>示例 3 — 指定播放器尺寸</h2>
+<p class="desc">Hexo 写法: <code>{% dplayer "url=视频地址" "width=640px" "height=360px" %}</code></p>
+<div id="dplayer3" class="dplayer" style="margin-bottom:20px;max-width:100%;width:640px;height:360px"></div>
+<script>
+(function(){
+  if (typeof DPlayer !== 'undefined') {
+    var dp3 = new DPlayer({
+      container: document.getElementById('dplayer3'),
+      autoplay: false,
+      video: {
+        url: 'https://cdn.jsdelivr.net/npm/dplayer@1.27.1/demo/demo.mp4',
+        pic: 'https://cdn.jsdelivr.net/npm/dplayer@1.27.1/demo/demo.png',
+        type: 'auto'
+      }
+    });
+    window.dplayers.push(dp3);
+  }
+})();
+</script>
+
+<hr>
+
+<h2>🔧 配置参考</h2>
+<p>在 Hexo <code>_config.yml</code> 中的推荐配置:</p>
+<pre><code>hexo-tag-dplayer:
+  js_path: /assets/js/
+  default:
+    api: https://api.prprpr.me/dplayer/
+    theme: '#FADFA3'
+    autoplay: false</code></pre>
+
+<p style="margin-top: 40px; color: #666; text-align: center; font-size: 13px;">
+  hexo-tag-dplayer v0.3.4 — Powered by <a href="https://github.com/DIYgod/DPlayer" style="color: #e94560;">DPlayer</a>
+</p>
+
+</body>
+</html>

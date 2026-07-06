@@ -1,0 +1,18 @@
+# Test artifacts
+.nyc_output/
+coverage/
+
+# Documentation (internal dev docs, not for distribution)
+doc/
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+test/

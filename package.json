@@ -1,10 +1,12 @@
 {
   "name": "hexo-tag-dplayer",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Embed dplayer in Hexo posts/pages",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/test-index.js",
+    "test:coverage": "nyc mocha test/test-index.js",
+    "test:watch": "mocha --watch test/test-index.js"
   },
   "keywords": [
     "video",
@@ -26,8 +28,14 @@
   "homepage": "https://github.com/MoePlayer/hexo-tag-dplayer#readme",
   "dependencies": {
     "dplayer": "^1.6.0",
-    "hexo-log": "^0.2.0",
     "hexo-fs": "^0.2.2",
+    "hexo-log": "^0.2.0",
     "hexo-util": "^0.6.2"
+  },
+  "devDependencies": {
+    "chai": "^6.2.2",
+    "mocha": "^11.7.6",
+    "nyc": "^18.0.0",
+    "sinon": "^22.0.0"
   }
 }

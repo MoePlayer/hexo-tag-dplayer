@@ -12,76 +12,82 @@ const fs = require('hexo-fs'),
   urlFn = require('url'),
   path = require('path'),
   srcDir = path.dirname(require.resolve('dplayer')),
-  scriptDir = '/assets/js/', // default script directories
-  styleDir = '/assets/css/',
-  files = [
-    ['DPlayer.min.css', styleDir],
-    ['DPlayer.min.js', scriptDir],
-    // some map for debug use
-    //['DPlayer.min.css.map', styleDir],
-    //['DPlayer.min.js.map', scriptDir],
-    // if there be any other dplayer file
-    //['someDplayerFile.xxx', targetDir],
-  ];
+  scriptDir = '/assets/js/'; // default script directory
 
-String.prototype.replaceAll = function(search, replacement) {
-    var target = this;
-    //log.debug(target.split(search))
-    return target.split(search).join(replacement);
-};
+// DPlayer files to serve (CSS is bundled inside DPlayer.min.js since v1.26+)
+var dplayerJsExists = false;
+try {
+  var dplayerJsPath = path.join(srcDir, 'DPlayer.min.js');
+  fs.accessSync(dplayerJsPath, (fs.constants || fs).R_OK);
+  dplayerJsExists = true;
+} catch(e) {
+  log.info('DPlayer.min.js is not found in this version of dplayer.');
+}
   
 var counter = 0,
   conf = hexo.config['hexo-tag-dplayer'] || {},
   tbIns=[];
 
-  
-if (!conf.cdn){
-  files.forEach(item => {
-    var destPath = item[1], filePath = path.join(srcDir, item[0]);
-    if (item[1] === scriptDir){
-      destPath = conf.js_path || item[1];
-    } else if (item[1] === styleDir){
-      destPath = conf.css_path || item[1];
+// Compute DPlayer JS URL for both head injection and dynamic loading fallback
+function getDPlayerJsUrl() {
+  if (conf.cdn) {
+    var cdn = Array.isArray(conf.cdn) ? conf.cdn : [conf.cdn];
+    // Find the JS URL from CDN array
+    for (var i = 0; i < cdn.length; i++) {
+      if (cdn[i].endsWith('.js')) return cdn[i];
     }
-    fs.access(filePath, (fs.constants || fs).R_OK , (err) => {
-      if(err){
-        log.info(item[0]+' is not found in this version of dplayer, skip it.');
-      } else {
-        hexo.extend.generator.register(path.posix.join(destPath, item[0]), (_) => {
-          return {
-            path: path.relative(hexo.config.root, path.posix.join(destPath, item[0])),
-            data: function() {
-              return fs.createReadStream(filePath);
-            }
-          }
-        });
-        tbIns.push(path.posix.join(destPath, item[0]));
-      }
-    })
-  })
+    return cdn[0];
+  }
+  var root = hexo.config.root || '/';
+  var jsPath = conf.js_path || scriptDir;
+  return urlFn.resolve(root, path.posix.join(jsPath, 'DPlayer.min.js'));
 }
 
-hexo.extend.filter.register('after_render:html', (str, data) => {
+var dplayerJsUrl = getDPlayerJsUrl();
+
+if (!conf.cdn){
+  var destPath = conf.js_path || scriptDir;
+  var filePath = path.join(srcDir, 'DPlayer.min.js');
+
+  if (dplayerJsExists) {
+    var outputPath = path.posix.join(destPath, 'DPlayer.min.js');
+    hexo.extend.generator.register(outputPath, function (_) {
+      return {
+        path: outputPath.replace(/^\//, ''),
+        data: function() {
+          return fs.createReadStream(filePath);
+        }
+      };
+    });
+    tbIns.push(outputPath);
+  }
+}
+
+hexo.extend.filter.register('after_render:html', function (str, data) {
   if(str.includes('</html>') && str.includes('class="dplayer hexo-tag-dplayer-mark"')){ //make sure dplayer used in final html
     log.debug("got page that dplayer used");
-    var target = conf.cdn || tbIns,
-      s = str;
-    target.forEach(item => {
-      //console.log(item);
-      if (item.endsWith('.css')) {
-        var tag = util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: item });
-        s = s.replace(/<\/head>/, tag + '</head>');
-      }else if (item.endsWith('.js')) {
-        var tag = util.htmlTag('script', {src: item}, '');
-        s = s.replace(/<\/head>/, tag + '</head>');
-      }else if (item.endsWith('.map')) {
-        //do nothing when sorce map used
-      }else{
-        log.info('unknown file type of dplayer file:'+item);
-      }
-    })
-    //log.debug('postfilter: '+s);
-    return s;
+    // Inject DPlayer JS into head (primary method for non-PJAX sites)
+    // The inline tag script also has a dynamic loading fallback for PJAX
+    if (!conf.cdn && dplayerJsExists) {
+      var tag = util.htmlTag('script', {src: dplayerJsUrl}, '');
+      str = str.replace(/<\/head>/, tag + '</head>');
+    } else if (conf.cdn) {
+      var cdn = Array.isArray(conf.cdn) ? conf.cdn : [conf.cdn];
+      cdn.forEach(function(item) {
+        if (item.endsWith('.js')) {
+          var tag = util.htmlTag('script', {src: item}, '');
+          str = str.replace(/<\/head>/, tag + '</head>');
+        } else if (item.endsWith('.css')) {
+          var tag = util.htmlTag('link', {rel: 'stylesheet', type: 'text/css', href: item });
+          str = str.replace(/<\/head>/, tag + '</head>');
+        } else if (item.endsWith('.map')) {
+          // do nothing when source map used
+        } else {
+          log.info('unknown file type of dplayer cdn file:'+item);
+        }
+      });
+    }
+    return str;
   }
   return str;
 })
@@ -120,7 +126,11 @@ hexo.extend.tag.register('dplayer', function (args) {
   const width = opt.width || def.width,
     height = opt.height || def.height;
   var url = opt.url || def.url;
-  var raw =  '<div id="'+ id + '" class="dplayer hexo-tag-dplayer-mark" style="margin-bottom: 20px;'+(width ?' width:'+width+';':'')+(height?' height:'+height+';':'')+'"></div>';
+  // Build responsive style: max-width prevents overflow on mobile (#31)
+  var containerStyle = 'margin-bottom: 20px;max-width:100%';
+  if (width) containerStyle += ';width:' + width;
+  if (height) containerStyle += ';height:' + height;
+  var raw =  '<div id="'+ id + '" class="dplayer hexo-tag-dplayer-mark" style="' + containerStyle + '"></div>';
   if(url != undefined){
     if (hexo.config['post_asset_folder'] == true ){
       //for #10, if post_asset_folder is enable, regard url as relative url
@@ -131,9 +141,9 @@ hexo.extend.tag.register('dplayer', function (args) {
         opt.url = urlFn.resolve(hexo.config.root, asset.path);
       }
     }
-    raw += '<script>(function(){var player = new DPlayer(' +
+    raw += '<script>(function(){' +
+      'var dplayerConfig = ' +
       JSON.stringify({
-        //element: "document.getElementById('')",
         container: "document.getElementById('')",
         autoplay: 'autoplay',
         theme: 'theme',
@@ -170,10 +180,10 @@ hexo.extend.tag.register('dplayer', function (args) {
         icons: 'icons',
         contextmenu: 'menu',
       },(k,v)=>{
-        //log.debug("k",k,"v",v,"?",opt[k],"?a", def[k])
         if (typeof v === 'string') {
           if (v !== "document.getElementById('')"){
-            return opt[v] || def[v];
+            var val = opt[v];
+            return (val !== undefined && val !== null) ? val : def[v];
           } else {
             return v;
           }
@@ -187,7 +197,23 @@ hexo.extend.tag.register('dplayer', function (args) {
           return v;
         }
       }).replace("\"document.getElementById('')\"",'document.getElementById("'+ id +'")') +
-    ');window.dplayers||(window.dplayers=[]);window.dplayers.push(player);' + (opt.code || def.code || '') + '})()</script>';
+    ';' +
+    'var __dpInit=function(){' +
+      'var player = new DPlayer(dplayerConfig);' +
+      'window.dplayers||(window.dplayers=[]);' +
+      'window.dplayers.push(player);' +
+      (opt.code || def.code || '') +
+    '};' +
+    'if(typeof DPlayer!=="undefined"){' +
+      '__dpInit();' +
+    '}else{' +
+      'var __dpScript=document.createElement("script");' +
+      '__dpScript.src="' + dplayerJsUrl + '";' +
+      '__dpScript.onload=__dpInit;' +
+      '__dpScript.onerror=function(){console.error("Failed to load DPlayer from ' + dplayerJsUrl + '");};' +
+      'document.head.appendChild(__dpScript);' +
+    '}' +
+    '})()</script>';
     //console.log(opt.code,def.code,(opt.code || def.code || ''));
   }
   else{
