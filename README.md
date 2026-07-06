@@ -10,7 +10,8 @@ Embed [DPlayer](https://github.com/DIYgod/DPlayer) in Hexo posts/pages via a sim
 [📺 在线示例](https://moeplayer.github.io/hexo-tag-dplayer/example/) | [示例源码](example/index.html)
 
 > **维护者注：** 维护者很忙，刚想起来有个坑，学成 AI 几年来填坑。万分抱歉。  
-> 目前没有空去处理 npm 源的提交，烦请手动安装进行测试。
+> 目前没有空去处理 npm 源的提交，烦请手动安装进行测试。  
+> 不着急的话可以再等等，等我结束没有电脑的出差后我会自己测试的。
 
 ## Install
 
