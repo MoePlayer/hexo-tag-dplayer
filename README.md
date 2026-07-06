@@ -9,9 +9,34 @@ Embed [DPlayer](https://github.com/DIYgod/DPlayer) in Hexo posts/pages via a sim
 
 [📺 在线示例](https://moeplayer.github.io/hexo-tag-dplayer/example/) | [示例源码](example/index.html)
 
-
+> **维护者注：** 维护者很忙，刚想起来有个坑，学成 AI 几年来填坑。万分抱歉。  
+> 目前没有空去处理 npm 源的提交，烦请手动安装进行测试。
 
 ## Install
+
+### 手动安装（推荐）
+
+```bash
+git clone https://github.com/MoePlayer/hexo-tag-dplayer.git
+cd hexo-tag-dplayer
+npm install
+```
+
+然后在 Hexo 站点的 `package.json` 中添加本地依赖：
+
+```json
+"dependencies": {
+  "hexo-tag-dplayer": "file:path/to/hexo-tag-dplayer"
+}
+```
+
+或直接使用 Git 地址：
+
+```bash
+npm install MoePlayer/hexo-tag-dplayer --save
+```
+
+### npm 安装（可能不是最新版本）
 
 ```bash
 npm install hexo-tag-dplayer --save
